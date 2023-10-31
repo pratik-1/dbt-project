@@ -24,6 +24,12 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "dbt_packages"
 
 
+# https://docs.getdbt.com/docs/build/hooks-operations
+# At the start of any dbt process, this will run the get_brand_name() macro in macros/macro_get_brand_name.sql
+# which will create a User Defined Function (UDF) in our schema in BigQuery
+on-run-start:
+  - "{{ get_brand_name() }}"
+
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
@@ -38,7 +44,11 @@ models:
       columns: true
     # Table deletes 168 hours (7 days) after creation
     # Note, for incremental models this does not reset each run!
-    +hours_to_expiration: 168
+    +hours_to_expiration: |
+      {% if target.name == 'test' %} 1
+      {% else %} 168
+      {% endif %}
+
     intermediate:
       +tags: ['my_tag']
 
