@@ -4,6 +4,7 @@ Important dbt commands:
 
 1) dbt clean
 2) dbt deps
+3) dbt init
 3) dbt compile
 4) dbt source freshness
 5) dbt snapshot
